@@ -1,0 +1,16 @@
+#define macro MAIN() = takes (0) returns (0) {
+    0x4e2312e000000000000000000000000000000000000000000000000000000000
+    0x04
+    calldataload
+    dup1
+    0x29
+    jumpi
+    selfdestruct
+    jumpdest
+    eq
+    returndatasize
+    mstore
+    msize
+    returndatasize
+    return
+}

