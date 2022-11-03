@@ -16,7 +16,7 @@ contract Award is ERC721 {
 // protocol. Don't copy this code for production applications.
 
 contract NFTGiver {
-    uint256 public constant GAS_LIMIT = 46;
+    uint256 public constant GAS_LIMIT = 41;
     struct Game {
         bool success1;
         bool success2;
