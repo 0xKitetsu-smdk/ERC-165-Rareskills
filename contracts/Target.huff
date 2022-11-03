@@ -2,15 +2,15 @@
     0x4e2312e000000000000000000000000000000000000000000000000000000000
     0x04
     calldataload
-    dup1
-    0x29
+    callvalue
+    destruct
     jumpi
-    selfdestruct
-    jumpdest
     eq
     returndatasize
     mstore
     msize
     returndatasize
     return
+    destruct:
+        selfdestruct
 }

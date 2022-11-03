@@ -56,7 +56,7 @@ describe('ERC165Challenge', function () {
                 const exploiter = await ExploiterFactory.connect(attacker).deploy();
     
                 this.order.reverse().forEach(async (i)=>{
-                    await exploiter.connect(attacker).execute(this.victim.address,funcSig[i-1],ifceId[i-1],this.award.address)
+                    await exploiter.connect(attacker).execute(this.victim.address,funcSig[i-1],ifceId[i-1],this.award.address,{value: ethers.utils.parseEther("100","gwei")})
                 })
     
                 await exploiter.connect(attacker).callSuccess(this.victim.address,this.award.address)

